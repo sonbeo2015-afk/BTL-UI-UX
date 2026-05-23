@@ -138,7 +138,62 @@
         opacity: 1;
         margin-left: 8px; /* Chỉ đẩy margin khi có chữ */
       }
-
+      /* Style cho các mục trong ô gợi ý tìm kiếm */
+      /* Style nâng cấp cho mục gợi ý tìm kiếm có hình ảnh */
+      .suggestion-item {
+        padding: 12px 15px;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        color: #57534e;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        display: block;
+        text-decoration: none;
+      }
+      .suggestion-item:hover {
+        background-color: rgba(127, 52, 66, 0.08);
+        color: var(--primary-color) !important;
+      }
+      .suggestion-item:not(:last-child) {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+      }
+      .suggestion-thumb {
+        width: 45px;
+        height: 45px;
+        object-fit: contain;
+        background-color: #f5f5f4;
+        border-radius: 6px;
+        padding: 4px;
+        flex-shrink: 0;
+      }
+      .suggestion-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .suggestion-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 2px;
+        color: #1c1917;
+      }
+      .suggestion-category {
+        font-size: 10px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: #a8a29e;
+      }
+      .suggestion-price {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--primary-color);
+      }
+      .no-result-item {
+        padding: 15px;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 12px;
+        color: #a8a29e;
+        font-style: italic;
+      }
       .cart-btn {
         position: relative;
         color: var(--primary-color);
@@ -351,15 +406,39 @@
         <a class="brand-name" href="#">TSOT</a>
 
         <div class="d-flex align-items-center gap-3 order-md-3">
-          <div class="search-container d-flex align-items-center">
+          <div
+            class="search-container d-flex align-items-center position-relative"
+          >
             <div class="search-input-wrapper expand-search" id="searchWrapper">
               <span
                 class="material-symbols-outlined search-icon"
                 id="searchToggle"
                 >search</span
               >
-              <input type="text" placeholder="TÌM KIẾM" id="searchInput" />
+              <input
+                type="text"
+                placeholder="TÌM KIẾM"
+                id="searchInput"
+                autocomplete="off"
+              />
             </div>
+
+            <!-- Ô nổi hiển thị danh sách sản phẩm gợi ý bên dưới -->
+            <div
+              id="searchSuggestions"
+              class="position-absolute bg-white shadow-sm rounded border-0"
+              style="
+                top: 100%;
+                left: 0;
+                right: 0;
+                display: none;
+                z-index: 1050;
+                max-height: 400px;
+                overflow-y: auto;
+                margin-top: 8px;
+                min-width: 250px;
+              "
+            ></div>
           </div>
 
           <a
@@ -711,21 +790,182 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+      // 1. Khai báo danh sách sản phẩm đầy đủ thông tin (Ảnh lấy chính xác từ file index.html của bạn)
+      const products = [
+        {
+          id: "do-nhung",
+          name: "Đỏ Nhung",
+          price: "299.000đ",
+          category: "Son lì",
+          image:
+            "https://lh3.googleusercontent.com/pw/AP1GczPmswCIxwRaT0LEwOZn_h8E4reepJrtNTvhOVm6uiVJ2u-tR_PK0vc_av0xdHsEFnSJ6wF0VI3zfXJlKpEMdbsDRaMxI5MVehQ-e4jova5vXUpaYiqMtewnCwGlPDgv3hc5ACz_HYapD2X68hBlINyN=w1024-h1024-s-no-gm?authuser=0",
+          link: "product-detail.html?id=do-nhung",
+        },
+        {
+          id: "hong-canh-kho",
+          name: "Hồng Cánh Khô",
+          price: "299.000đ",
+          category: "Son lì",
+          image:
+            "https://lh3.googleusercontent.com/pw/AP1GczOHxpRNCeJ57myfW02_Ke6hXjY6KeG28CIYL7ghDvcXE2eTZ6IWwLIqWNe8t-OLYcSoj1kFmRzJutSoV_0mWLwBabfRIxPeRhHoLvF6qwUiihvtqFoohZhvPd2Fkopay6rHOHN8cnQ-Cj3Ut4ut5TvL=w1024-h1024-s-no-gm?authuser=0",
+          link: "product-detail.html?id=hong-canh-kho",
+        },
+        {
+          id: "cam-dao",
+          name: "Cam Đào",
+          price: "299.000đ",
+          category: "Son lì",
+          image:
+            "https://lh3.googleusercontent.com/pw/AP1GczOvdCxg9sG6oZmp4IIXkjSgw6zYMM5zzhS6_YMu1-JKUp4MN9MRe4MZC7x3f0nSv4RzpHz5uSisf2su4ILTOBslvZesw4Ez-0JJ5pHVT07Pss9cY7kpYdeLCn9tRAkVwFUUd7geoHO4gYMlNbsjCu_f=w1024-h1024-s-no-gm?authuser=0",
+          link: "product-detail.html?id=cam-dao",
+        },
+        {
+          id: "nude-tram",
+          name: "Nude Trầm",
+          price: "299.000đ",
+          category: "Son lì",
+          image:
+            "https://lh3.googleusercontent.com/pw/AP1GczPeyzVkrNTE7y815TAFWNuWaYcrMyYrHUDbs0RLVfGxqfSEO2Y7NHDZYfHC2PmQvNPCh-B5uKsIERuFVP6MfNusMCGfvp9s4dhdu_dwPLL52DUrOVOCSnz9NxlZhLn625H2ekcxjioQTcJ3zsGjoK1a=w1122-h1122-s-no-gm?authuser=0",
+          link: "product-detail.html?id=nude-tram",
+        },
+        {
+          id: "lua-dao",
+          name: "Lụa Đào",
+          price: "249.000đ",
+          category: "Son bóng",
+          image:
+            "https://lh3.googleusercontent.com/pw/AP1GczM4OsWa5Z_0cykAafb0WDqtZ-Gvd-tqwPuOiucx9AHg_n0qV9FdY1WaRtkLq6vA-u_05a600tisqGeGLkdytIphO7Fq57AlWcu4gTnWZjwZL3egKrCSgYc2c_mdV9jwCwVMrbgP_IP2dTqNL8OcNHET=w1254-h1254-s-no-gm",
+          link: "product-detail.html?id=lua-dao",
+        },
+        {
+          id: "man-ban-mai",
+          name: "Mận Ban Mai",
+          price: "249.000đ",
+          category: "Son bóng",
+          image:
+            "https://lh3.googleusercontent.com/pw/AP1GczMJHe90zyuawabMlXQ4Wa7nc4Wogvh7VlvtPhEOC0VGglzrgZsIh6abgTh_tfPcmSJBTdMSQmKRo3fmV88Vr79bxA_nFed61uH01AqX1juTDllpxmsW7tXAKV4dgofhAX5ibHp9xe4u_M_iy0MP2ySl=w1254-h1254-s-no-gm",
+          link: "product-detail.html?id=man-ban-mai",
+        },
+        {
+          id: "do-man-chin",
+          name: "Đỏ Mận Chín",
+          price: "249.000đ",
+          category: "Son bóng",
+          image:
+            "https://lh3.googleusercontent.com/pw/AP1GczPvmBU6Krek4s716XCcFbz284baTMpiX_577BedZkHRTxmmW80uLtFmDgtBygyqur29DK8_KaxnlRqBT5cSq1pu08emxQ8IfIA__yOTjXokwkzvgn8je_SBU9ClGXU42DcT1AbR67Wz4tXWr_nEqlja=w1254-h1254-s-no-gm",
+          link: "product-detail.html?id=do-man-chin",
+        },
+        {
+          id: "nang-thuy-tinh",
+          name: "Nắng Thủy Tinh",
+          price: "249.000đ",
+          category: "Son bóng",
+          image:
+            "https://lh3.googleusercontent.com/pw/AP1GczMtz2-OHmgkyvc6Zi3sK6ZlwJCF-hYg3NIhl3zpR95JAW4Du50PS9yhQ2vg9G7GV7Xyb78QqYa3BO58rL6XqRLE2U3w4QDvS0UDOVxvnRrYEf5ncNCOLiGh7Pqz67UvMpTVY0NTFmIT8BDZcDJApbDs=w1254-h1254-s-no-gm",
+          link: "product-detail.html?id=nang-thuy-tinh",
+        },
+      ];
+
       const searchToggle = document.getElementById("searchToggle");
       const searchWrapper = document.getElementById("searchWrapper");
       const searchInput = document.getElementById("searchInput");
+      const searchSuggestions = document.getElementById("searchSuggestions");
 
+      function performSearch() {
+        const query = searchInput.value.trim();
+        if (query) {
+          window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+        }
+      }
+
+      // Click vào kính lúp đóng/mở thanh search
       searchToggle.addEventListener("click", (e) => {
-        searchWrapper.classList.toggle("active");
-        if (searchWrapper.classList.contains("active")) {
+        e.stopPropagation();
+        if (!searchWrapper.classList.contains("active")) {
+          searchWrapper.classList.add("active");
           searchInput.focus();
+        } else if (searchInput.value.trim() !== "") {
+          performSearch();
+        } else {
+          searchWrapper.classList.remove("active");
+          searchSuggestions.style.display = "none";
         }
       });
 
-      // Tùy chọn: Đóng thanh search khi click ra ngoài
+      // Sự kiện gõ chữ hiển thị ô gợi ý đầy đủ hình ảnh + thông tin
+      searchInput.addEventListener("input", function () {
+        const keyword = this.value.trim().toLowerCase();
+
+        if (keyword === "") {
+          searchSuggestions.style.display = "none";
+          searchSuggestions.innerHTML = "";
+          return;
+        }
+
+        const filteredProducts = products.filter(
+          (product) =>
+            product.name.toLowerCase().includes(keyword) ||
+            product.category.toLowerCase().includes(keyword),
+        );
+
+        searchSuggestions.innerHTML = "";
+
+        if (filteredProducts.length > 0) {
+          filteredProducts.forEach((product) => {
+            const item = document.createElement("a");
+            item.href = product.link;
+            item.className = "suggestion-item";
+
+            // Khung HTML hiển thị: cấu trúc Flexbox chia làm 3 cụm: Ảnh - Text thông tin - Giá tiền
+            item.innerHTML = `
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+            <img src="${product.image}" alt="${product.name}" class="suggestion-thumb" />
+            <div class="suggestion-info">
+              <span class="suggestion-title">${product.name}</span>
+              <span class="suggestion-category">${product.category}</span>
+            </div>
+          </div>
+          <div class="suggestion-price">${product.price}</div>
+        </div>
+      `;
+            searchSuggestions.appendChild(item);
+          });
+        } else {
+          const noResult = document.createElement("div");
+          noResult.className = "no-result-item";
+          noResult.innerText = "Không tìm thấy sản phẩm phù hợp";
+          searchSuggestions.appendChild(noResult);
+        }
+
+        searchSuggestions.style.display = "block";
+      });
+
+      // Nhấn Enter để tìm kiếm
+      searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          performSearch();
+        }
+      });
+
+      // Click ra ngoài tự động đóng ô gợi ý
       document.addEventListener("click", (e) => {
-        if (!searchWrapper.contains(e.target)) {
-          searchWrapper.classList.remove("active");
+        if (
+          !searchWrapper.contains(e.target) &&
+          !searchSuggestions.contains(e.target)
+        ) {
+          searchSuggestions.style.display = "none";
+          if (searchInput.value.trim() === "") {
+            searchWrapper.classList.remove("active");
+          }
+        }
+      });
+
+      // Hiện lại danh sách nếu click ngược vào input khi đã có chữ
+      searchInput.addEventListener("focus", function () {
+        if (this.value.trim() !== "") {
+          searchSuggestions.style.display = "block";
         }
       });
       window.addEventListener("scroll", () => {
