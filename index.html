@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TSOT</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Plus+Jakarta+Sans:wght@200..800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <style>
+      :root {
+        --primary-color: rgb(127, 52, 66);
+        --faded-color: rgba(127, 52, 66, 0.3);
+        --bg-creme: #fcf9f4;
+      }
+
+      body {
+        background-color: #fcf9f4;
+        color: #1c1917;
+      }
+      .navbar-custom {
+        background-color: var(--bg-creme);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 1rem 2rem;
+      }
+      @media (max-width: 991.98px) {
+        .ad-image-column {
+          display: none !important;
+        }
+        .justify-content-end {
+          justify-content: center !important;
+        }
+
+        .footer-custom .container-xl {
+          padding-left: 1.5rem !important; /* Khớp với px-4 của các section trên */
+          padding-right: 1.5rem !important;
+        }
+
+        /* Đảm bảo nút cuộn trang không bị đẩy quá xa */
+        .footer-custom .justify-content-end {
+          justify-content: flex-end !important; /* Giữ icon ở bên phải */
+        }
+
+        /* Tùy chỉnh kích thước chữ bản quyền cho cân đối trên mobile */
+        .footer-custom p {
+          padding-right: 10px;
+        }
+      }
+      /* Giữ nguyên các phần CSS cũ về đường kẻ ::after của bạn... */
+      .nav-link-custom {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: #57534e !important;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        position: relative;
+        padding: 0.5rem 0 !important;
+        margin: 0 1.5rem;
+        display: inline-block;
+        text-decoration: none;
+      }
+
+      .nav-link-custom::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background-color: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+
+      .nav-link-custom.active::after,
+      .nav-link-custom:hover::after {
+        width: 100%;
+      }
+      /* Xóa border-bottom cũ nếu có */
+      .nav-link-custom.active {
+        border-bottom: none !important;
+        color: var(--primary-color) !important;
+      }
+
+      /* Tối ưu Search Wrapper */
+      .search-input-wrapper {
+        border-bottom: 2px solid rgba(127, 52, 66, 0.1);
+        display: flex;
+        align-items: center;
+        padding-bottom: 5px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 28px; /* Cố định độ rộng bằng kích thước icon để không bị lẹm */
+        overflow: hidden;
+        white-space: nowrap;
+        justify-content: flex-start; /* Giữ icon cố định bên trái */
+      }
+
+      .search-icon {
+        cursor: pointer;
+        font-size: 20px !important; /* Giảm nhẹ size để an toàn cho mobile */
+        color: var(--primary-color);
+        flex-shrink: 0; /* Quan trọng: Ngăn icon bị bóp méo khi thu nhỏ */
+      }
+
+      .search-input-wrapper input {
+        border: none;
+        background: transparent;
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        outline: none;
+        width: 0;
+        opacity: 0;
+        transition: all 0.3s ease;
+        margin-left: 0; /* Reset margin */
+        padding: 0;
+      }
+
+      /* Khi active thanh tìm kiếm trên Desktop */
+      .search-input-wrapper.active {
+        width: 160px; /* Giảm nhẹ từ 180px để an toàn hơn */
+        border-bottom: 2px solid var(--primary-color);
+      }
+
+      .search-input-wrapper.active input {
+        width: 120px;
+        opacity: 1;
+        margin-left: 8px; /* Chỉ đẩy margin khi có chữ */
+      }
+
+      .cart-btn {
+        position: relative;
+        color: var(--primary-color);
+      }
+
+      .cart-badge {
+        position: absolute;
+        top: -5px;
+        right: -8px;
+        background-color: var(--primary-color);
+        color: white;
+        font-size: 9px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .cart-badge.has-items {
+        display: flex;
+      }
+
+      .brand-name {
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        font-weight: 500;
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        text-decoration: none;
+      }
+
+      /* Decor Elements */
+      .bg-blur-circle {
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        border-radius: 50%;
+        background-color: var(--faded-color);
+        filter: blur(100px);
+        z-index: -1;
+        opacity: 0.3;
+      }
+
+      .circle-top-left {
+        top: -100px;
+        left: -100px;
+      }
+      .circle-bottom-right {
+        bottom: -100px;
+        right: -100px;
+      }
+
+      /* Typography */
+      .hero-subtitle {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.4em;
+        color: var(--primary-color);
+      }
+
+      .hero-title {
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        font-weight: 300;
+        line-height: 1.1;
+      }
+
+      .section-title {
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        font-weight: 400;
+        color: var(--primary-color);
+      }
+
+      .floating-title {
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        color: var(--primary-color);
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        transform: rotate(-10deg);
+        pointer-events: none;
+        text-shadow: 2px 4px 15px rgba(127, 52, 66, 0.15);
+      }
+
+      .divider-primary {
+        width: 60px;
+        height: 1px;
+        background-color: var(--primary-color);
+        margin: 1.5rem auto;
+      }
+
+      /* Helpers */
+      .aspect-4-5 {
+        aspect-ratio: 4 / 5;
+      }
+      .aspect-16-10 {
+        aspect-ratio: 16 / 10;
+      }
+      .rounded-full-custom {
+        border-radius: 9999px;
+      }
+
+      .img-hover-scale {
+        transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        object-fit: cover;
+      }
+      .group:hover .img-hover-scale {
+        transform: scale(1.06);
+      }
+
+      .product-circle-bg {
+        background-color: #f5f5f4;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem; /* Giảm padding một chút để ảnh rõ hơn */
+        transition: all 0.4s ease;
+        aspect-ratio: 1/1;
+        overflow: hidden; /* CẮT BỎ PHẦN TRÀN */
+        width: 100%; /* Đảm bảo vòng tròn co giãn theo cột */
+        cursor: pointer;
+      }
+
+      .product-circle-bg img {
+        width: 80%;
+        height: 80%;
+        object-fit: contain;
+      }
+      .group:hover .product-circle-bg {
+        background-color: rgba(127, 52, 66, 0.08);
+      }
+
+      .btn-atelier {
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 9999px;
+        padding: 12px 35px;
+        font-size: 1rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        border: none;
+        transition: all 0.3s ease;
+      }
+      .btn-atelier:hover {
+        background-color: rgba(127, 52, 66, 0.4);
+        color: rgb(127, 52, 66);
+      }
+      .btn-atelier:active {
+        background-color: rgba(127, 52, 66, 0.1);
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+      .animate-bounce {
+        animation: bounce 2s infinite;
+        color: #d6d3d1;
+        cursor: pointer;
+      }
+      /* Story Section Styles */
+      .story-text {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        line-height: 1.8;
+        color: #57534e;
+        font-size: 0.95rem;
+        max-width: 600px;
+      }
+      /* Footer Styles */
+      .footer-custom {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 1.5rem 0;
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+
+      .btn-scroll-top {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+      }
+
+      .btn-scroll-top:hover {
+        background: white;
+        color: var(--primary-color);
+        transform: translateY(-3px);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md sticky-top navbar-custom">
+      <div class="container-xl">
+        <a class="brand-name" href="#">TSOT</a>
+
+        <div class="d-flex align-items-center gap-3 order-md-3">
+          <div class="search-container d-flex align-items-center">
+            <div class="search-input-wrapper expand-search" id="searchWrapper">
+              <span
+                class="material-symbols-outlined search-icon"
+                id="searchToggle"
+                >search</span
+              >
+              <input type="text" placeholder="TÌM KIẾM" id="searchInput" />
+            </div>
+          </div>
+
+          <a
+            href="login.html"
+            id="user-link"
+            class="text-decoration-none d-flex align-items-center gap-2"
+            style="color: var(--primary-color)"
+          >
+            <span id="user-icon" class="material-symbols-outlined">person</span>
+            <span
+              id="user-name-display"
+              class="font-sans fw-bold"
+              style="font-size: 12px; display: none"
+            ></span>
+          </a>
+
+          <button
+            class="btn p-0 border-0 cart-btn"
+            onclick="location.href = 'cart.html'"
+          >
+            <span class="material-symbols-outlined">shopping_bag</span>
+            <span id="cart-count" class="cart-badge">0</span>
+          </button>
+
+          <button
+            class="navbar-toggler border-0 shadow-none p-0"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+          >
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+        </div>
+
+        <div
+          class="collapse navbar-collapse justify-content-center order-md-2"
+          id="navbarNav"
+        >
+          <ul class="navbar-nav gap-md-2">
+            <li class="nav-item text-center">
+              <a class="nav-link nav-link-custom" href="#page-intro"
+                >GIỚI THIỆU</a
+              >
+            </li>
+            <li class="nav-item text-center">
+              <a class="nav-link nav-link-custom" href="#son-li">BỘ SƯU TẬP</a>
+            </li>
+            <li class="nav-item text-center">
+              <a class="nav-link nav-link-custom" href="#company-info"
+                >VỀ CHÚNG TÔI</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section
+      id="page-intro"
+      class="position-relative overflow-hidden d-flex flex-column align-items-center justify-content-center text-center px-4"
+      style="height: 30rem"
+    >
+      <div class="bg-blur-circle circle-top-left"></div>
+
+      <div class="bg-blur-circle circle-bottom-right"></div>
+
+      <div class="container">
+        <p class="hero-subtitle mb-4">Khám phá những lựa chọn mới nhất</p>
+
+        <h1 class="hero-title display-1 mb-4">Bộ sưu tập</h1>
+
+        <p class="hero-description font-sans">
+          Nơi hội tụ những gam màu nhẹ nhàng và tinh tế, giúp tôn vinh vẻ đẹp tự
+          nhiên vốn có. Hãy cùng chúng mình khám phá sự kết hợp hoàn hảo giữa
+          ánh sáng và màu sắc trong từng lựa chọn.
+        </p>
+
+        <div class="mt-5">
+          <a
+            class="material-symbols-outlined animate-bounce text-decoration-none"
+            href="#son-li"
+          >
+            expand_more
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="son-li" class="py-5 px-4 mx-auto" style="max-width: 1400px">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-5 position-relative group ad-image-column">
+          <div class="aspect-4-5 w-100 overflow-hidden rounded-full-custom">
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgJx8oSNS3eRQ7eb1HzVqbUfFwgaTUP-b7m3soXiDaPIdYAj34mjPA581aSxMCNWPX_0368e2Prp8FwfcUdtaHPGFJZOJW59wYUYoJSlK_uRO0Aeta1SN5wCkMjbtTFgJxN-5UcfJZV5stM6KmLcYEeDgA2ztNekoj-rmKplpDdmSXwWOpGWpe2xqzr7-SjXl7WpowAMUV5peCY00oyXcGqJfPmDbNbnWqy8X1bFi4hs2iXohLWnDsKkmmal-FfDaY1sc6usrSguI"
+              class="w-100 h-100 img-hover-scale"
+              alt="Matte Series"
+            />
+          </div>
+        </div>
+        <div class="col-lg ps-lg-5 section-content-l">
+          <div class="mb-5">
+            <h2 class="section-title display-4 mb-3">Son lì</h2>
+            <h3 class="hero-subtitle mb-2">The Matte Series</h3>
+            <p class="font-sans text-muted">
+              Đậm nét, mịn mượt như nhung. Một lớp phủ hoàn hảo để lại dấu ấn
+              khó phai trên từng cái chạm.
+            </p>
+          </div>
+          <div class="row g-4">
+            <div class="col-6 group text-center cursor-pointer">
+              <a
+                href="product-detail.html?id=do-nhung"
+                class="text-decoration-none text-black"
+              >
+                <div class="product-circle-bg mb-3">
+                  <img
+                    src="https://lh3.googleusercontent.com/pw/AP1GczPmswCIxwRaT0LEwOZn_h8E4reepJrtNTvhOVm6uiVJ2u-tR_PK0vc_av0xdHsEFnSJ6wF0VI3zfXJlKpEMdbsDRaMxI5MVehQ-e4jova5vXUpaYiqMtewnCwGlPDgv3hc5ACz_HYapD2X68hBlINyN=w1024-h1024-s-no-gm?authuser=0"
+                    alt="Product"
+                  />
+                </div>
+                <h4 class="font-sans h6 mb-1">Đỏ Nhung</h4>
+                <p class="small text-muted">299.000đ</p>
+              </a>
+            </div>
+            <div class="col-6 group text-center cursor-pointer">
+              <a
+                href="product-detail.html?id=hong-canh-kho"
+                class="text-decoration-none text-black"
+              >
+                <div class="product-circle-bg mb-3">
+                  <img
+                    src="https://lh3.googleusercontent.com/pw/AP1GczOHxpRNCeJ57myfW02_Ke6hXjY6KeG28CIYL7ghDvcXE2eTZ6IWwLIqWNe8t-OLYcSoj1kFmRzJutSoV_0mWLwBabfRIxPeRhHoLvF6qwUiihvtqFoohZhvPd2Fkopay6rHOHN8cnQ-Cj3Ut4ut5TvL=w1024-h1024-s-no-gm?authuser=0"
+                    alt="Product"
+                  />
+                </div>
+                <h4 class="font-sans h6 mb-1">Hồng Cánh Khô</h4>
+                <p class="small text-muted">299.000đ</p>
+              </a>
+            </div>
+            <div class="col-6 group text-center cursor-pointer">
+              <a
+                href="product-detail.html?id=cam-dao"
+                class="text-decoration-none text-black"
+              >
+                <div class="product-circle-bg mb-3">
+                  <img
+                    src="https://lh3.googleusercontent.com/pw/AP1GczOvdCxg9sG6oZmp4IIXkjSgw6zYMM5zzhS6_YMu1-JKUp4MN9MRe4MZC7x3f0nSv4RzpHz5uSisf2su4ILTOBslvZesw4Ez-0JJ5pHVT07Pss9cY7kpYdeLCn9tRAkVwFUUd7geoHO4gYMlNbsjCu_f=w1024-h1024-s-no-gm?authuser=0"
+                    alt="Product"
+                  />
+                </div>
+                <h4 class="font-sans h6 mb-1">Cam Đào</h4>
+                <p class="small text-muted">299.000đ</p>
+              </a>
+            </div>
+            <div class="col-6 group text-center cursor-pointer">
+              <a
+                href="product-detail.html?id=nude-tram"
+                class="text-decoration-none text-black"
+              >
+                <div class="product-circle-bg mb-3">
+                  <img
+                    src="https://lh3.googleusercontent.com/pw/AP1GczPeyzVkrNTE7y815TAFWNuWaYcrMyYrHUDbs0RLVfGxqfSEO2Y7NHDZYfHC2PmQvNPCh-B5uKsIERuFVP6MfNusMCGfvp9s4dhdu_dwPLL52DUrOVOCSnz9NxlZhLn625H2ekcxjioQTcJ3zsGjoK1a=w1122-h1122-s-no-gm?authuser=0"
+                    alt="Product"
+                  />
+                </div>
+                <h4 class="font-sans h6 mb-1">Nude Trầm</h4>
+                <p class="small text-muted">299.000đ</p>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="son-bong" class="py-5" style="background-color: #fafaf9">
+      <div class="container-xxl px-4">
+        <div class="row align-items-center g-5">
+          <div class="col-lg order-2 order-lg-1 text-start text-lg-end">
+            <div class="mb-5">
+              <h2 class="section-title display-4 mb-3">Son bóng</h2>
+              <p class="hero-subtitle">THE GLOSS SERIES</p>
+              <p class="font-sans text-muted">
+                Hiệu ứng căng mọng như pha lê, cấp ẩm tức thì cho đôi môi vẻ đẹp
+                trong trẻo, rạng rỡ.
+              </p>
+            </div>
+
+            <div class="row g-4 justify-content-end">
+              <div class="col-6 group text-center">
+                <a
+                  href="product-detail.html?id=lua-dao"
+                  class="text-decoration-none text-black"
+                >
+                  <div
+                    class="product-circle-bg mb-3"
+                    style="transform: scale(0.95)"
+                  >
+                    <img
+                      src="https://lh3.googleusercontent.com/pw/AP1GczM4OsWa5Z_0cykAafb0WDqtZ-Gvd-tqwPuOiucx9AHg_n0qV9FdY1WaRtkLq6vA-u_05a600tisqGeGLkdytIphO7Fq57AlWcu4gTnWZjwZL3egKrCSgYc2c_mdV9jwCwVMrbgP_IP2dTqNL8OcNHET=w1254-h1254-s-no-gm"
+                      class="img-fluid"
+                      alt="Gloss"
+                    />
+                  </div>
+                  <h4 class="font-sans h6">Lụa Đào</h4>
+                  <p class="small text-muted">249.000đ</p>
+                </a>
+              </div>
+
+              <div class="col-6 group text-center cursor-pointer">
+                <a
+                  href="product-detail.html?id=man-ban-mai"
+                  class="text-decoration-none text-black"
+                >
+                  <div
+                    class="product-circle-bg mb-3"
+                    style="transform: scale(0.95)"
+                  >
+                    <img
+                      src="https://lh3.googleusercontent.com/pw/AP1GczMJHe90zyuawabMlXQ4Wa7nc4Wogvh7VlvtPhEOC0VGglzrgZsIh6abgTh_tfPcmSJBTdMSQmKRo3fmV88Vr79bxA_nFed61uH01AqX1juTDllpxmsW7tXAKV4dgofhAX5ibHp9xe4u_M_iy0MP2ySl=w1254-h1254-s-no-gm"
+                      class="img-fluid"
+                      alt="Mận Ban Mai"
+                    />
+                  </div>
+                  <h4 class="font-sans h6 mb-1">Mận Ban Mai</h4>
+                  <p class="small text-muted">249.000đ</p>
+                </a>
+              </div>
+
+              <div class="col-6 group text-center cursor-pointer">
+                <a
+                  href="product-detail.html?id=do-man-chin"
+                  class="text-decoration-none text-black"
+                >
+                  <div
+                    class="product-circle-bg mb-3"
+                    style="transform: scale(0.95)"
+                  >
+                    <img
+                      src="https://lh3.googleusercontent.com/pw/AP1GczPvmBU6Krek4s716XCcFbz284baTMpiX_577BedZkHRTxmmW80uLtFmDgtBygyqur29DK8_KaxnlRqBT5cSq1pu08emxQ8IfIA__yOTjXokwkzvgn8je_SBU9ClGXU42DcT1AbR67Wz4tXWr_nEqlja=w1254-h1254-s-no-gm"
+                      class="img-fluid"
+                      alt="Đỏ Mận Chín"
+                    />
+                  </div>
+                  <h4 class="font-sans h6 mb-1">Đỏ Mận Chín</h4>
+                  <p class="small text-muted">249.000đ</p>
+                </a>
+              </div>
+
+              <div class="col-6 group text-center cursor-pointer">
+                <a
+                  href="product-detail.html?id=nang-thuy-tinh"
+                  class="text-decoration-none text-black"
+                >
+                  <div
+                    class="product-circle-bg mb-3"
+                    style="transform: scale(0.95)"
+                  >
+                    <img
+                      src="https://lh3.googleusercontent.com/pw/AP1GczMtz2-OHmgkyvc6Zi3sK6ZlwJCF-hYg3NIhl3zpR95JAW4Du50PS9yhQ2vg9G7GV7Xyb78QqYa3BO58rL6XqRLE2U3w4QDvS0UDOVxvnRrYEf5ncNCOLiGh7Pqz67UvMpTVY0NTFmIT8BDZcDJApbDs=w1254-h1254-s-no-gm"
+                      class="img-fluid"
+                      alt="Nắng Thủy Tinh"
+                    />
+                  </div>
+                  <h4 class="font-sans h6 mb-1">Nắng Thủy Tinh</h4>
+                  <p class="small text-muted">249.000đ</p>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-5 order-1 order-lg-2 ad-image-column group">
+            <div class="aspect-4-5 w-100 overflow-hidden rounded-full-custom">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmpAJ5tNKFafCQwtzAlq2RQk1vKVQ1l1Dzt0wj-XWqyXIt_ev4YvAYxiA2ePbVqf6GkfRO4VpJmvbD71TxisUgTByOvAR4w7fAROBocdQwnyCwPT7xzTPWPRUjkjgZc-5CpWBba2e1hJbsurZrTJ1KTbsMqVfBCYfgSNgw0YFzjk5U84pD931Ybx_XRU8VxXIP9u-p3XZT7uLIYMEIADkQAl5XF1I2C7uscGPm6y9Na0L2KggTisGGz_deeWPumw1_ow2k-d9s1fI"
+                class="w-100 h-100 img-hover-scale"
+                alt="Glossy Model"
+              />
+              <div
+                class="position-absolute inset-0"
+                style="
+                  background: rgba(127, 52, 66, 0.08);
+                  mix-blend-mode: multiply;
+                  pointer-events: none; /* Nên thêm cái này để không cản trở hover vào ảnh */
+                "
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section
+      id="company-info"
+      class="py-5 position-relative overflow-hidden"
+      style="background-color: rgba(127, 52, 66, 0.08)"
+    >
+      <div class="container py-5">
+        <div class="row align-items-center g-5">
+          <div class="col-lg-5" data-aos="fade-up">
+            <h3 class="hero-subtitle mb-3">Triết lý TSOT</h3>
+            <h2 class="section-title display-5 mb-4">
+              Hơi thở của <br /><span class="signature-font">Sự Tinh Tế</span>
+            </h2>
+            <div class="divider-primary ms-0"></div>
+          </div>
+
+          <div class="col-lg-7">
+            <div class="story-text">
+              <p class="mb-4">
+                Tại <strong>TSOT</strong>, chúng tôi tin rằng son môi không chỉ
+                là một món đồ trang điểm, mà là ngôn ngữ không lời của sự tự
+                tin. Được thành lập từ niềm đam mê với những vẻ đẹp nguyên bản,
+                mỗi thỏi son của TSOT là sự kết tinh giữa công nghệ từ phòng lab
+                hiện đại và cảm hứng từ sắc màu thiên nhiên.
+              </p>
+
+              <p class="mb-0">
+                Dòng son của chúng mình tập trung vào
+                <strong>độ tinh khiết của sắc tố</strong> và
+                <strong>dưỡng chất thực vật</strong>. Dù là chất son Matte mịn
+                lì che phủ hoàn hảo hay dòng Gloss căng mọng đầy sức sống, TSOT
+                cam kết mang lại trải nghiệm nhẹ tênh, bảo vệ đôi môi suốt cả
+                ngày dài.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer class="footer-custom mt-auto">
+      <div class="container-xl">
+        <div class="row align-items-center">
+          <div class="col-6">
+            <p
+              class="mb-0"
+              style="font-size: 12px; letter-spacing: 0.05em; opacity: 0.8"
+            >
+              © 2026 <span class="fw-bold">TSOT Lipsticks</span>.<br />
+              All rights reserved.
+            </p>
+          </div>
+
+          <div class="col-6 d-flex justify-content-end">
+            <a href="#" class="btn-scroll-top" title="Cuộn lên đầu trang">
+              <span class="material-symbols-outlined"> arrow_upward </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const searchToggle = document.getElementById("searchToggle");
+      const searchWrapper = document.getElementById("searchWrapper");
+      const searchInput = document.getElementById("searchInput");
+
+      searchToggle.addEventListener("click", (e) => {
+        searchWrapper.classList.toggle("active");
+        if (searchWrapper.classList.contains("active")) {
+          searchInput.focus();
+        }
+      });
+
+      // Tùy chọn: Đóng thanh search khi click ra ngoài
+      document.addEventListener("click", (e) => {
+        if (!searchWrapper.contains(e.target)) {
+          searchWrapper.classList.remove("active");
+        }
+      });
+      window.addEventListener("scroll", () => {
+        const sections = document.querySelectorAll("section");
+        const navLinks = document.querySelectorAll(".nav-link-custom");
+
+        let currentId = "";
+
+        // 1. Kiểm tra nếu đã cuộn xuống gần cuối trang (cho mục Về Chúng Tôi)
+        const isAtBottom =
+          window.innerHeight + window.pageYOffset >=
+          document.body.offsetHeight - 100;
+
+        if (isAtBottom) {
+          currentId = "company-info";
+        } else {
+          // 2. Logic tính toán vị trí như bình thường
+          sections.forEach((section) => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            // Trừ đi 200px để active sớm hơn một chút, tạo cảm giác mượt mà
+            if (pageYOffset >= sectionTop - 200) {
+              currentId = section.getAttribute("id");
+            }
+          });
+        }
+
+        // 3. Cập nhật class Active trên Menu
+        navLinks.forEach((link) => {
+          link.classList.remove("active");
+          const href = link.getAttribute("href");
+
+          // Xử lý gom nhóm cho BỘ SƯU TẬP (Son lì & Son bóng)
+          if (href === "#son-li") {
+            if (currentId === "son-li" || currentId === "son-bong") {
+              link.classList.add("active");
+            }
+          }
+          // Xử lý cho GIỚI THIỆU và VỀ CHÚNG TÔI
+          else if (href === `#${currentId}`) {
+            link.classList.add("active");
+          }
+        });
+      });
+
+      // Chạy khởi tạo ngay khi load trang
+      window.dispatchEvent(new Event("scroll"));
+      function updateCartBadge() {
+        const cart = JSON.parse(localStorage.getItem("tsot_cart")) || [];
+        const badge = document.getElementById("cart-count");
+        const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+        if (totalQty > 0) {
+          badge.innerText = totalQty;
+          badge.style.display = "flex";
+          badge.classList.add("has-items");
+        } else {
+          badge.style.display = "none";
+        }
+      }
+
+      // Chạy khi trang vừa load
+      document.addEventListener("DOMContentLoaded", updateCartBadge);
+      function checkLoginStatus() {
+        // Lấy thông tin user từ localStorage (key này được set ở file login.html)
+        const user = JSON.parse(localStorage.getItem("tsot_user"));
+        const userLink = document.getElementById("user-link");
+        const userIcon = document.getElementById("user-icon");
+        const userNameDisplay = document.getElementById("user-name-display");
+
+        if (user && user.fullName) {
+          // 1. Chuyển hướng sang profile thay vì login
+          userLink.href = "profile.html";
+
+          // 2. Thay đổi icon sang dạng có FILL (đặc)
+          userIcon.style.fontVariationSettings =
+            "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24";
+
+          // 3. Hiển thị tên người dùng bên cạnh
+          userNameDisplay.innerText = user.fullName.toUpperCase();
+          userNameDisplay.style.display = "inline";
+        }
+      }
+
+      // Gọi hàm này bên trong sự kiện DOMContentLoaded hiện có của bạn
+      document.addEventListener("DOMContentLoaded", () => {
+        updateCartBadge();
+        checkLoginStatus(); // Thêm dòng này
+      });
+    </script>
+  </body>
+</html>
