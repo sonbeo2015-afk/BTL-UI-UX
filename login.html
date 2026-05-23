@@ -3,132 +3,1040 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tài khoản - TSOT</title>
+    <title>Sign In</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Plus+Jakarta+Sans:wght@200..800&display=swap"
       rel="stylesheet"
     />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
     />
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+    ></script>
     <style>
       :root {
         --primary-color: rgb(127, 52, 66);
+        --faded-color: rgba(127, 52, 66, 0.3);
         --bg-creme: #fcf9f4;
       }
-      body {
-        background-color: var(--bg-creme);
-        font-family: "Plus Jakarta Sans", sans-serif;
-        min-height: 100vh;
-        margin: 0;
-      }
-
-      .top-left-wrapper {
+      .back-to-home {
         position: absolute;
-        top: 40px;
-        left: 40px;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 20px;
-      }
-
-      /* Nút quay lại dùng history.back() */
-      .btn-back {
+        top: 20px;
+        left: 20px;
+        background-color: var(--primary-color);
+        color: white;
+        text-decoration: none;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 5px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        z-index: 10;
+        padding: 5px 10px;
+        border-radius: 20px;
+        cursor: pointer; /* Thêm dòng này */
+      }
+
+      .back-to-home:hover {
+        background-color: var(--faded-color);
+        color: var(--primary-color);
+      }
+      @media (max-width: 576px) {
+        /* Bỏ định vị tuyệt đối trên mobile để card co giãn theo nội dung */
+        .container.position-absolute {
+          position: relative;
+          top: 0;
+          left: 0;
+          translate: 0 0;
+          width: calc(100% - 30px);
+          margin: auto;
+        }
+        .p-5 {
+          padding: 0.5rem !important;
+        }
+        .mb-5 {
+          margin-bottom: 0.5rem !important;
+        }
+      }
+      .font-serif {
+        font-family: "Noto Serif", serif;
+      }
+      .font-sans {
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+      .font-serif.fst-italic {
+        font-size: clamp(1.5rem, 5vw, 2rem) !important;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 0;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background: var(--faded-color);
+        position: relative;
+        z-index: 0;
+      }
+      .slideshow-column {
+        padding: 0 !important;
+        overflow: hidden;
+        position: relative;
+        border-radius: 2rem 0 0 2rem;
+        display: flex;
+      }
+
+      .img-wrapper {
+        width: 100%;
+        height: 100%;
+      }
+
+      .static-lipstick-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        filter: brightness(0.8);
+        transition: transform 0.7s ease;
+      }
+
+      .slideshow-column:hover .static-lipstick-img {
+        transform: scale(1.1);
+      }
+      .custom-input-group {
+        width: 100%;
+        max-width: 22rem;
+        margin-bottom: 2rem;
+      }
+
+      .input-header {
+        color: var(--primary-color);
+        gap: 0.5rem;
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+        margin-bottom: 0.5rem;
+      }
+
+      .small-label {
+        font-size: clamp(0.65rem, 2vw, 0.8rem);
+        letter-spacing: 0.12em;
+        font-weight: 700;
+      }
+      .custom-input-group {
+        position: relative; /* Quan trọng để định vị ::after */
+        width: 100%;
+        max-width: 22rem;
+        margin-bottom: 2rem;
+      }
+      /* 3. Tạo đường viền giả bằng ::after */
+      .custom-input-group::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px; /* Độ dày bằng với border cũ */
+        background-color: var(--primary-color);
+
+        /* Hiệu ứng kéo từ trái sang */
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+      }
+
+      /* 4. Khi focus vào input bên trong group thì kích hoạt ::after */
+      .custom-input-group:focus-within::after {
+        transform: scaleX(1);
+      }
+      .text-input {
+        font-size: clamp(0.9rem, 2.5vw, 1rem);
+        width: 100%;
+        border: 0;
+        /* Giữ border mờ nhạt ban đầu */
+        border-bottom: 2px solid rgba(127, 52, 66, 0.1);
+        padding: 10px 0;
+        background: transparent;
+        transition: all 0.3s ease;
+      }
+
+      .text-input::placeholder {
+        color: rgba(127, 52, 66, 0.5);
+        font-weight: 300;
+      }
+
+      .text-input:focus {
+        outline: none !important;
+        box-shadow: none !important;
+        /* Bỏ border-bottom đậm cũ đi */
+        border-bottom: 2px solid rgba(127, 52, 66, 0.1);
+      }
+      .form-options {
+        width: 100%;
+        max-width: 22rem;
+        font-size: 0.85rem;
+        margin-top: 0rem;
+        margin-bottom: 2rem;
+      }
+      .form-options,
+      .create-account {
+        font-size: clamp(0.75rem, 2vw, 0.9rem);
+      }
+      .forgot-password {
         color: var(--primary-color);
         text-decoration: none;
         font-weight: 600;
-        font-size: 0.9rem;
-        background: none;
-        border: none;
-        padding: 0;
-        cursor: pointer;
+        transition: opacity 0.3s;
       }
-
-      .btn-back span:last-child {
+      .btn-signin {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 50px;
+        border: 0;
+        max-width: 22rem;
+        font-weight: bold;
+        background-color: var(--primary-color);
+        color: white;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+      }
+      .btn-signin:hover {
+        background-color: rgba(127, 52, 66, 0.5);
+        color: rgba(127, 52, 66);
+      }
+      .btn-signin:active {
+        background-color: rgba(127, 52, 66, 0.3);
+        color: rgba(127, 52, 66);
+      }
+      .forgot-password {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 700;
         position: relative;
-        padding-bottom: 2px;
+        transition: all 0.3s ease;
       }
 
-      .btn-back span:last-child::after {
+      .forgot-password::after {
         content: "";
         position: absolute;
-        left: 0;
-        bottom: 0;
         width: 0;
         height: 2px;
+        bottom: -3px;
+        left: 0;
         background-color: var(--primary-color);
-        transition: width 0.3s ease-in-out;
+        transition: width 0.3s ease;
       }
 
-      .btn-back:hover span:last-child::after {
+      .forgot-password:hover {
+        opacity: 0.7;
+      }
+      .forgot-password:hover::after {
         width: 100%;
       }
 
-      .welcome-text {
-        font-family: "Noto Serif", serif;
-        font-style: italic;
-        color: var(--primary-color);
-        font-size: 2rem;
-        margin: 0;
+      .forgot-password:active {
+        opacity: 0.3;
+      }
+      .form-check-input {
+        border: 1px solid rgba(127, 52, 66, 0.25);
+        transition: background-color 0.3s;
+      }
+      .form-check-input:hover {
+        background-color: rgba(127, 52, 66, 0.1);
+      }
+      .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+      }
+      .form-check-input:focus {
+        box-shadow: 0 0 0 1rem rgb(0, 0, 0);
+        border-color: var(--primary-color);
+      }
+      .divider-container {
+        position: relative;
+        width: 100%;
+        max-width: 22rem;
+        text-align: center;
+        margin-top: 2rem;
+        margin-bottom: 1.5rem;
       }
 
-      .btn-atelier {
+      .divider-line {
+        position: absolute;
+        top: 60%;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background-color: var(--primary-color);
+        z-index: 1;
+      }
+
+      .divider-text {
+        position: relative;
+        z-index: 2;
+        background-color: white;
+        padding: 0 15px;
+        font-size: clamp(0.55rem, 1.5vw, 0.65rem);
+        letter-spacing: 0.2em;
+        color: var(--primary-color);
+      }
+
+      .social-btn {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        border: 1px solid var(--faded-color);
+        background: transparent;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+      }
+      .social-btn svg {
+        width: 1.8rem;
+        height: 1.8rem;
+        transition: all 0.3s ease;
+        display: block;
+      }
+      .social-btn:hover {
+        border-color: var(--primary-color);
         background-color: var(--primary-color);
         color: white;
-        border-radius: 9999px;
-        height: 42px;
-        padding: 0 25px;
-        letter-spacing: 0.1em;
-        border: none;
-        transition: 0.3s;
-        font-weight: 600;
-        cursor: pointer;
+        transform: translateY(-3px);
       }
-      .btn-atelier:hover {
-        background-color: rgba(127, 52, 66, 0.4);
-        color: rgb(127, 52, 66);
+      .social-btn:active {
+        opacity: 0.7;
+      }
+      .social-btn:hover svg path {
+        fill: currentColor;
+        stroke: none;
+      }
+      .create-account {
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+        color: var(--primary-color);
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+
+      .create-account a {
+        margin-left: 0.25rem;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 700;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+      .create-account a::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -4px;
+        left: 0;
+        background-color: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+
+      .create-account a:hover {
+        opacity: 0.7;
+      }
+      .create-account a:active {
+        opacity: 0.3;
+      }
+      .create-account a:hover::after {
+        width: 100%;
+      }
+      #login-block,
+      #register-block,
+      #forgot-block {
+        animation: fadeIn 0.5s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0.2;
+          transform: translateY(1rem);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .tsot-toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: white;
+        color: var(--primary-color);
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(127, 52, 66, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 9999;
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.5s ease;
+      }
+
+      .tsot-toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .tsot-toast .material-symbols-outlined {
+        font-size: 20px;
+      }
+
+      .toast-message {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
       }
     </style>
   </head>
-  <body>
-    <div class="top-left-wrapper">
-      <button onclick="history.back()" class="btn-back">
-        <span class="material-symbols-outlined">arrow_back</span>
-        <span>Quay lại</span>
-      </button>
-
-      <h1 id="welcome-msg" class="welcome-text">
-        Chào mừng khách đến với TSOT Lipstick
-      </h1>
-
-      <button onclick="logout()" class="btn-atelier">ĐĂNG XUẤT</button>
+  <body class="position-relative" style="">
+    <div id="toast-container" class="tsot-toast">
+      <span class="material-symbols-outlined"></span>
+      <div class="toast-message" id="toast-text"></div>
     </div>
+    <div
+      class="container rounded-5"
+      style="
+        background-color: white;
+        box-shadow: 0px 10px 10px rgba(127, 52, 66, 0.2);
+      "
+    >
+      <a
+        href="javascript:void(0)"
+        onclick="history.back()"
+        class="back-to-home font-sans"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Quay lại</span>
+      </a>
+      <div class="row justify-content-center">
+        <div class="col-lg-6 d-none d-lg-block slideshow-column">
+          <div class="img-wrapper h-100">
+            <img
+              src="https://i.redd.it/h4pmgtzrz9t51.jpg"
+              alt="Lipstick 1"
+              class="static-lipstick-img"
+            />
+          </div>
+        </div>
+        <!-- Khối màn hình đăng nhập -->
+        <div class="col-10 col-lg d-flex flex-column align-items-center p-5">
+          <div
+            id="login-block"
+            class="w-100 d-flex flex-column align-items-center"
+          >
+            <p
+              class="font-serif fst-italic mb-5 text-center"
+              style="color: var(--primary-color); font-size: 2rem"
+            >
+              Đăng nhập
+            </p>
 
+            <div class="custom-input-group">
+              <div class="d-flex align-items-center input-header">
+                <svg
+                  width="1.2rem"
+                  height="1.2rem"
+                  viewBox="0 0 32 32"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                >
+                  <g
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M25,27H7c-2.2,0-4-1.8-4-4V9c0-2.2,1.8-4,4-4h18c2.2,0,4,1.8,4,4v14C29,25.2,27.2,27,25,27z"
+                    ></path>
+                    <polyline points="3,10 16,18 29,10"></polyline>
+                  </g>
+                </svg>
+
+                <label class="text-uppercase small-label font-sans" for="email">
+                  Email
+                </label>
+              </div>
+
+              <input
+                class="text-input font-sans"
+                id="email"
+                name="email"
+                placeholder="example@email.com"
+                type="email"
+                autocomplete="on"
+              />
+            </div>
+
+            <div class="custom-input-group">
+              <div class="d-flex align-items-center input-header">
+                <svg
+                  width="1.2rem"
+                  height="1.2rem"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C21.4816 5.82475 21.7706 6.69989 21.8985 8"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M9 12C9 12.5523 8.55228 13 8 13C7.44772 13 7 12.5523 7 12C7 11.4477 7.44772 11 8 11C8.55228 11 9 11.4477 9 12Z"
+                    fill="currentColor"
+                  />
+                  <path
+                    d="M13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12Z"
+                    fill="currentColor"
+                  />
+                  <path
+                    d="M17 12C17 12.5523 16.5523 13 16 13C15.4477 13 15 12.5523 15 12C15 11.4477 15.4477 11 16 11C16.5523 11 17 11.4477 17 12Z"
+                    fill="currentColor"
+                  />
+                </svg>
+                <label
+                  class="text-uppercase small-label font-sans"
+                  for="password"
+                  >MẬT KHẨU</label
+                >
+              </div>
+              <input
+                type="password"
+                class="text-input font-sans"
+                id="password"
+                name="password"
+                placeholder="*********"
+                autocomplete="off"
+              />
+            </div>
+
+            <div
+              class="d-flex justify-content-between align-items-center form-options font-sans"
+            >
+              <div class="form-check">
+                <input
+                  class="form-check-input shadow-none"
+                  type="checkbox"
+                  id="rememberMe"
+                />
+                <label
+                  class="form-check-label"
+                  for="rememberMe"
+                  style="cursor: pointer; color: var(--primary-color)"
+                  >Lưu thông tin</label
+                >
+              </div>
+              <a
+                href="javascript:void(0)"
+                onclick="toggleForm('forgot')"
+                class="forgot-password"
+                >Quên mật khẩu?</a
+              >
+            </div>
+
+            <button class="btn-signin font-sans">ĐĂNG NHẬP</button>
+            <p class="create-account">
+              Chưa có tài khoản?
+              <a href="javascript:void(0)" onclick="toggleForm('reg')">
+                Đăng ký tài khoản</a
+              >
+            </p>
+          </div>
+          <!-- Khối màn hình đăng kí tài khoản -->
+          <div
+            id="register-block"
+            class="w-100 d-none flex-column align-items-center"
+          >
+            <p
+              class="font-serif fst-italic mb-5 text-center"
+              style="color: var(--primary-color); font-size: 2rem"
+            >
+              Đăng ký
+            </p>
+
+            <div class="custom-input-group">
+              <div class="d-flex align-items-center input-header">
+                <svg
+                  width="1.2rem"
+                  height="1.2rem"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <label class="text-uppercase small-label font-sans"
+                  >HỌ VÀ TÊN</label
+                >
+              </div>
+              <input
+                class="text-input font-sans"
+                placeholder="Họ và tên của bạn"
+                type="text"
+              />
+            </div>
+
+            <div class="custom-input-group">
+              <div class="d-flex align-items-center input-header">
+                <svg
+                  width="1.2rem"
+                  height="1.2rem"
+                  viewBox="0 0 32 32"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                >
+                  <g
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M25,27H7c-2.2,0-4-1.8-4-4V9c0-2.2,1.8-4,4-4h18c2.2,0,4,1.8,4,4v14C29,25.2,27.2,27,25,27z"
+                    ></path>
+                    <polyline points="3,10 16,18 29,10"></polyline>
+                  </g>
+                </svg>
+
+                <label class="text-uppercase small-label font-sans" for="email">
+                  Email
+                </label>
+              </div>
+
+              <input
+                class="text-input font-sans"
+                id="email"
+                name="email"
+                placeholder="example@email.com"
+                type="email"
+                autocomplete="on"
+              />
+            </div>
+            <div
+              class="d-flex align-items-center gap-3"
+              style="max-width: 22rem"
+            >
+              <div class="custom-input-group">
+                <div class="d-flex align-items-center input-header">
+                  <svg
+                    width="1.2rem"
+                    height="1.2rem"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C21.4816 5.82475 21.7706 6.69989 21.8985 8"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M9 12C9 12.5523 8.55228 13 8 13C7.44772 13 7 12.5523 7 12C7 11.4477 7.44772 11 8 11C8.55228 11 9 11.4477 9 12Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      d="M13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      d="M17 12C17 12.5523 16.5523 13 16 13C15.4477 13 15 12.5523 15 12C15 11.4477 15.4477 11 16 11C16.5523 11 17 11.4477 17 12Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  <label
+                    class="text-uppercase small-label font-sans"
+                    for="password"
+                    >MẬT KHẨU</label
+                  >
+                </div>
+                <input
+                  type="password"
+                  class="text-input font-sans"
+                  id="password"
+                  name="password"
+                  placeholder="*********"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="custom-input-group">
+                <div class="d-flex align-items-center input-header">
+                  <svg
+                    width="1.2rem"
+                    height="1.2rem"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M21 13V8C21 6.89543 20.1046 6 19 6H5C3.89543 6 3 6.89543 3 8V14C3 15.1046 3.89543 16 5 16H12"
+                      ></path>
+                      <path d="M14.5 18.5L16.5 20.5L20.5 16.5"></path>
+                      <path d="M12 11.01L12.01 10.9989"></path>
+                      <path d="M16 11.01L16.01 10.9989"></path>
+                      <path d="M8 11.01L8.01 10.9989"></path>
+                    </g>
+                  </svg>
+                  <label class="text-uppercase small-label font-sans"
+                    >XÁC NHẬN</label
+                  >
+                </div>
+                <input
+                  type="password"
+                  class="text-input font-sans"
+                  placeholder="*********"
+                />
+              </div>
+            </div>
+
+            <button class="btn-signin font-sans">TẠO TÀI KHOẢN</button>
+            <p class="create-account">
+              Đã có tài khoản?
+              <a href="javascript:void(0)" onclick="toggleForm('login')">
+                Đăng nhập ngay</a
+              >
+            </p>
+          </div>
+          <!-- Khối màn hình quên mật khẩu -->
+          <div
+            id="forgot-block"
+            class="w-100 d-none flex-column align-items-center"
+          >
+            <p
+              class="font-serif fst-italic mb-5 text-center"
+              style="color: var(--primary-color); font-size: 2rem"
+            >
+              Đặt lại mật khẩu
+            </p>
+            <p
+              class="text-center font-sans mb-4"
+              style="
+                font-size: 1rem;
+                color: var(--primary-color);
+                max-width: 20rem;
+              "
+            >
+              Vui lòng nhập email của bạn. Hệ thống sẽ tạo một
+              <b>mật khẩu mới ngẫu nhiên</b> và gửi trực tiếp vào hòm thư của
+              bạn.
+            </p>
+            <div class="custom-input-group">
+              <div class="d-flex align-items-center input-header">
+                <svg
+                  width="1.2rem"
+                  height="1.2rem"
+                  viewBox="0 0 32 32"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                >
+                  <g
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M25,27H7c-2.2,0-4-1.8-4-4V9c0-2.2,1.8-4,4-4h18c2.2,0,4,1.8,4,4v14C29,25.2,27.2,27,25,27z"
+                    ></path>
+                    <polyline points="3,10 16,18 29,10"></polyline>
+                  </g>
+                </svg>
+
+                <label class="text-uppercase small-label font-sans" for="email">
+                  Email
+                </label>
+              </div>
+
+              <input
+                class="text-input font-sans"
+                id="email"
+                name="email"
+                placeholder="example@email.com"
+                type="email"
+                autocomplete="on"
+              />
+            </div>
+            <button class="btn-signin font-sans">GỬI MẬT KHẨU MỚI</button>
+            <p class="create-account">
+              Đã có tài khoản?
+              <a href="javascript:void(0)" onclick="toggleForm('login')">
+                Đăng nhập ngay</a
+              >
+            </p>
+          </div>
+          <div class="divider-container font-sans">
+            <div class="divider-line"></div>
+            <span class="divider-text text-uppercase fw-bold"
+              >ĐĂNG NHẬP BẰNG</span
+            >
+          </div>
+
+          <div class="d-flex justify-content-center gap-3 mb-5">
+            <a href="#" class="social-btn shadow-sm">
+              <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="m31.6814,34.8868c-1.9155,1.29-4.3586,2.0718-7.2514,2.0718-5.59,0-10.3395-3.7723-12.04-8.8541v-.0195c-.43-1.29-.6841-2.6582-.6841-4.085s.2541-2.795.6841-4.085c1.7005-5.0818,6.45-8.8541,12.04-8.8541,3.1664,0,5.9809,1.0945,8.2286,3.2055l6.1568-6.1568c-3.7332-3.4791-8.5805-5.6095-14.3855-5.6095-8.4045,0-15.6559,4.8277-19.1936,11.8641-1.4659,2.8927-2.3064,6.1568-2.3064,9.6359s.8405,6.7432,2.3064,9.6359v.0195c3.5377,7.0168,10.7891,11.8445,19.1936,11.8445,5.805,0,10.6718-1.9155,14.2291-5.1991,4.0655-3.7527,6.4109-9.2645,6.4109-15.8123,0-1.5245-.1368-2.9905-.3909-4.3977h-20.2491v8.3264h11.5709c-.5082,2.6777-2.0327,4.945-4.3195,6.4695h0Z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+            <a href="#" class="social-btn shadow-sm">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M22 12C22 6.47714 17.5229 1.99999 12 1.99999C6.47715 1.99999 2 6.47714 2 12C2 16.9913 5.65686 21.1283 10.4375 21.8785V14.8906H7.89844V12H10.4375V9.79687C10.4375 7.29062 11.9304 5.90624 14.2146 5.90624C15.3087 5.90624 16.4531 6.10155 16.4531 6.10155V8.56249H15.1921C13.9499 8.56249 13.5625 9.33333 13.5625 10.1242V12H16.3359L15.8926 14.8906H13.5625V21.8785C18.3431 21.1283 22 16.9913 22 12Z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.2"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+            <a href="#" class="social-btn shadow-sm">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                class="bi bi-twitter-x"
+                viewBox="0 0 16 16"
+                style="width: 1.6rem; height: 1.6rem"
+              >
+                <path
+                  d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="0.7"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const user = JSON.parse(localStorage.getItem("tsot_user"));
-        const welcomeMsg = document.getElementById("welcome-msg");
-
-        if (user && user.fullName) {
-          welcomeMsg.innerText = `Chào mừng ${user.fullName} đến với TSOT Lipstick`;
-        } else {
-          window.location.href = "login.html";
-        }
-      });
-
-      function logout() {
-        localStorage.removeItem("tsot_user");
-        window.location.href = "index.html";
+      function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
       }
+      // 1. Hàm chuyển đổi qua lại giữa các Form
+      function toggleForm(type) {
+        const login = document.getElementById("login-block");
+        const register = document.getElementById("register-block");
+        const forgot = document.getElementById("forgot-block");
+
+        [login, register, forgot].forEach((block) => {
+          block.classList.add("d-none");
+          block.classList.remove("d-flex");
+        });
+
+        let target =
+          type === "reg" ? register : type === "forgot" ? forgot : login;
+        target.classList.remove("d-none");
+        target.classList.add("d-flex");
+      }
+
+      // 2. Hàm hiển thị Toast Custom
+      function showToast(msg, isError = false) {
+        const toast = document.getElementById("toast-container");
+        const toastText = document.getElementById("toast-text");
+        const toastIcon = toast.querySelector(".material-symbols-outlined");
+
+        // Cập nhật nội dung & icon
+        toastText.innerText = msg;
+        if (isError) {
+          toast.style.color = "#dc3545"; // Màu đỏ lỗi
+          toastIcon.innerText = "error";
+        } else {
+          toast.style.color = "var(--primary-color)"; // Màu chính
+          toastIcon.innerText = "check_circle";
+        }
+
+        // Hiển thị animation
+        toast.classList.add("show");
+
+        // Tự động ẩn sau 3 giây
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
+      // 3. XỬ LÝ ĐĂNG KÝ (Register)
+      const regBlock = document.getElementById("register-block");
+      const btnReg = regBlock.querySelector(".btn-signin");
+
+      btnReg.onclick = function () {
+        const inputs = regBlock.querySelectorAll("input");
+        const fullName = inputs[0].value;
+        const email = inputs[1].value;
+        const pass = inputs[2].value;
+        const confirmPass = inputs[3].value;
+
+        if (!fullName || !email || !pass) {
+          showToast("Vui lòng điền đầy đủ thông tin!", true);
+          return;
+        }
+
+        // Check định dạng email
+        if (!validateEmail(email)) {
+          showToast("Định dạng Email không hợp lệ!", true);
+          return;
+        }
+
+        if (pass !== confirmPass) {
+          showToast("Mật khẩu xác nhận không khớp!", true);
+          return;
+        }
+
+        let users = JSON.parse(localStorage.getItem("tsot_users")) || [];
+        if (users.find((u) => u.email === email)) {
+          showToast("Email này đã được đăng ký!", true);
+          return;
+        }
+
+        users.push({ fullName, email, pass });
+        localStorage.setItem("tsot_users", JSON.stringify(users));
+
+        showToast("Đăng ký thành công! Đang chuyển sang Đăng nhập...");
+        setTimeout(() => toggleForm("login"), 1500);
+      };
+
+      // 4. XỬ LÝ ĐĂNG NHẬP (Login)
+      const loginBlock = document.getElementById("login-block");
+      const btnLogin = loginBlock.querySelector(".btn-signin");
+
+      btnLogin.onclick = function () {
+        const email = document.getElementById("email").value;
+        const pass = document.getElementById("password").value;
+
+        if (!email || !pass) {
+          showToast("Vui lòng nhập Email và Mật khẩu!", true);
+          return;
+        }
+
+        // Kiểm tra trong LocalStorage
+        let users = JSON.parse(localStorage.getItem("tsot_users")) || [];
+        const user = users.find((u) => u.email === email && u.pass === pass);
+
+        if (user) {
+          showToast("Chào mừng " + user.fullName + " đã quay lại!");
+          // LƯU Ý: Phải lưu vào key "tsot_user" (số ít) để các trang khác nhận diện được phiên đăng nhập
+          localStorage.setItem("tsot_user", JSON.stringify(user));
+
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 2000);
+        } else {
+          showToast("Email hoặc mật khẩu không đúng!", true);
+        }
+      };
+
+      // 5. XỬ LÝ QUÊN MẬT KHẨU (Forgot Password)
+      const forgotBlock = document.getElementById("forgot-block");
+      const btnForgot = forgotBlock.querySelector(".btn-signin");
+
+      btnForgot.onclick = function () {
+        const emailInput = forgotBlock.querySelector("input");
+        const email = emailInput.value;
+
+        if (!email || !validateEmail(email)) {
+          showToast("Vui lòng nhập Email hợp lệ!", true);
+          return;
+        }
+
+        let users = JSON.parse(localStorage.getItem("tsot_users")) || [];
+        const userIndex = users.findIndex((u) => u.email === email);
+
+        if (userIndex !== -1) {
+          // 1. Tạo mật khẩu mới
+          const newPass = Math.random().toString(36).slice(-6);
+
+          // 2. Cập nhật localStorage (Cực kỳ quan trọng để tí nữa đăng nhập được)
+          users[userIndex].pass = newPass;
+          localStorage.setItem("tsot_users", JSON.stringify(users));
+
+          // 3. Gửi Email qua EmailJS
+          // Các tham số: ("SERVICE_ID", "TEMPLATE_ID", { BIẾN TRUYỀN VÀO }, "PUBLIC_KEY")
+          emailjs
+            .send(
+              "service_oui51i6",
+              "template_l70ll8j",
+              {
+                to_email: email, // Biến này nếu bạn dùng trong mục 'To Email' của template
+                new_password: newPass, // Tên này phải TRÙNG KHỚP với {{new_password}} trong template
+                user_name: users[userIndex].fullName, // Gửi kèm tên cho thân thiện nếu muốn
+              },
+              "gJbv72fqJ9Jt9JSJn",
+            )
+            .then(() => {
+              showToast("Mật khẩu mới đã được gửi vào Email của bạn!");
+              setTimeout(() => toggleForm("login"), 3000);
+            })
+            .catch((err) => {
+              console.error("Lỗi EmailJS:", err);
+              showToast("Không thể gửi email. Vui lòng thử lại!", true);
+            });
+        } else {
+          showToast("Email này chưa được đăng ký!", true);
+        }
+      };
     </script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+    ></script>
+    <script type="text/javascript">
+      (function () {
+        emailjs.init("gJbv72fqJ9Jt9JSJn");
+      })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
