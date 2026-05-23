@@ -108,7 +108,62 @@
         opacity: 1;
         margin-left: 8px;
       }
-
+      /* Style nâng cấp cho mục gợi ý tìm kiếm có hình ảnh */
+      .suggestion-item {
+        padding: 12px 15px;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        color: #57534e;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        display: block;
+        text-decoration: none;
+      }
+      .suggestion-item:hover {
+        background-color: rgba(127, 52, 66, 0.08);
+        color: var(--primary-color) !important;
+      }
+      .suggestion-item:not(:last-child) {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+      }
+      .suggestion-thumb {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        background-color: #f5f5f4;
+        border-radius: 6px;
+        padding: 4px;
+        flex-shrink: 0;
+      }
+      .suggestion-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .suggestion-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 2px;
+        color: #1c1917;
+      }
+      .suggestion-category {
+        font-size: 10px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: #a8a29e;
+      }
+      .suggestion-price {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--primary-color);
+      }
+      .no-result-item {
+        padding: 15px;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 12px;
+        color: #a8a29e;
+        font-style: italic;
+        text-align: center;
+      }
       .cart-btn {
         position: relative;
         color: var(--primary-color);
@@ -345,15 +400,39 @@
         <a class="brand-name" href="index.html">TSOT</a>
 
         <div class="d-flex align-items-center gap-3 order-md-3">
-          <div class="search-container d-flex align-items-center">
+          <div
+            class="search-container d-flex align-items-center position-relative"
+          >
             <div class="search-input-wrapper expand-search" id="searchWrapper">
               <span
                 class="material-symbols-outlined search-icon"
                 id="searchToggle"
                 >search</span
               >
-              <input type="text" placeholder="TÌM KIẾM" id="searchInput" />
+              <input
+                type="text"
+                placeholder="TÌM KIẾM"
+                id="searchInput"
+                autocomplete="off"
+              />
             </div>
+
+            <!-- Ô nổi hiển thị danh sách sản phẩm gợi ý bên dưới -->
+            <div
+              id="searchSuggestions"
+              class="position-absolute bg-white shadow-sm rounded border-0"
+              style="
+                top: 100%;
+                left: 0;
+                right: 0;
+                display: none;
+                z-index: 1050;
+                max-height: 400px;
+                overflow-y: auto;
+                margin-top: 8px;
+                min-width: 250px;
+              "
+            ></div>
           </div>
 
           <a
@@ -741,32 +820,118 @@
         // --- ĐÂY LÀ DẤU NGOẶC QUAN TRỌNG ĐỂ ĐÓNG KHỐI LỆNH IF (DATA) ---
       }
 
-      // 5. LOGIC SEARCH (Độc lập nằm ngoài khối "if data" để trang không lỗi nếu lỡ nhập sai ID)
+      // 5. LOGIC SEARCH NÂNG CẤP (Tận dụng Object 'products' đã khai báo ở đầu Script)
       const searchToggle = document.getElementById("searchToggle");
       const searchWrapper = document.getElementById("searchWrapper");
       const searchInput = document.getElementById("searchInput");
+      const searchSuggestions = document.getElementById("searchSuggestions");
 
-      if (searchToggle && searchWrapper && searchInput) {
+      function performSearch() {
+        const query = searchInput.value.trim();
+        if (query) {
+          window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+        }
+      }
+
+      if (searchToggle && searchWrapper && searchInput && searchSuggestions) {
+        // Click kính lúp đóng / mở thanh tìm kiếm thông minh
         searchToggle.addEventListener("click", (e) => {
           e.stopPropagation();
-          searchWrapper.classList.toggle("active");
-          if (searchWrapper.classList.contains("active")) {
+          if (!searchWrapper.classList.contains("active")) {
+            searchWrapper.classList.add("active");
             searchInput.focus();
+          } else if (searchInput.value.trim() !== "") {
+            performSearch();
+          } else {
+            searchWrapper.classList.remove("active");
+            searchSuggestions.style.display = "none";
           }
         });
 
+        // Lắng nghe sự kiện gõ phím -> Hiện gợi ý trực quan lấy từ object products
+        searchInput.addEventListener("input", function () {
+          const keyword = this.value.trim().toLowerCase();
+
+          if (keyword === "") {
+            searchSuggestions.style.display = "none";
+            searchSuggestions.innerHTML = "";
+            return;
+          }
+
+          searchSuggestions.innerHTML = "";
+          let hasResults = false;
+
+          // Duyệt qua các key trong object products có sẵn
+          Object.keys(products).forEach((key) => {
+            const itemData = products[key];
+            // Xác định bộ sưu tập: Son bóng nếu thuộc Gloss Series, ngược lại là Son lì
+            const categoryName = itemData.collection.includes("Gloss")
+              ? "Son bóng"
+              : "Son lì";
+
+            // Kiểm tra xem từ khóa khớp với tên son hoặc phân loại không
+            if (
+              itemData.name.toLowerCase().includes(keyword) ||
+              categoryName.toLowerCase().includes(keyword)
+            ) {
+              hasResults = true;
+
+              const itemLink = `?id=${key}`; // Trỏ trực tiếp lại trang này với id mới
+              const element = document.createElement("a");
+              element.href = itemLink;
+              element.className = "suggestion-item";
+              element.innerHTML = `
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+              <img src="${itemData.img}" alt="${itemData.name}" class="suggestion-thumb" />
+              <div class="suggestion-info">
+                <span class="suggestion-title">${itemData.name}</span>
+                <span class="suggestion-category">${categoryName}</span>
+              </div>
+            </div>
+            <div class="suggestion-price">${itemData.price.toLocaleString("vi-VN")}đ</div>
+          </div>
+        `;
+              searchSuggestions.appendChild(element);
+            }
+          });
+
+          if (!hasResults) {
+            const noResult = document.createElement("div");
+            noResult.className = "no-result-item";
+            noResult.innerText = "Không tìm thấy sản phẩm phù hợp";
+            searchSuggestions.appendChild(noResult);
+          }
+
+          searchSuggestions.style.display = "block";
+        });
+
+        // Sự kiện bấm nút Enter
+        searchInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            performSearch();
+          }
+        });
+
+        // Click bên ngoài tự động đóng khung gợi ý
         document.addEventListener("click", (e) => {
           if (
             !searchWrapper.contains(e.target) &&
-            searchWrapper.classList.contains("active")
+            !searchSuggestions.contains(e.target)
           ) {
-            searchWrapper.classList.remove("active");
-            searchInput.value = "";
+            searchSuggestions.style.display = "none";
+            if (searchInput.value.trim() === "") {
+              searchWrapper.classList.remove("active");
+            }
           }
         });
 
-        searchWrapper.addEventListener("click", (e) => {
-          e.stopPropagation();
+        // Khi click focus lại vào ô input (nếu đang có chữ) thì mở lại bảng gợi ý
+        searchInput.addEventListener("focus", function () {
+          if (this.value.trim() !== "") {
+            searchSuggestions.style.display = "block";
+          }
         });
       }
 
