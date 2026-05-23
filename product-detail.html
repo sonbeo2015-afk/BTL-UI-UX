@@ -270,7 +270,6 @@
         background-color: var(--primary-color);
         color: white;
         padding: 1.5rem 0;
-        margin-top: 5rem;
       }
       .btn-scroll-top {
         background: rgba(255, 255, 255, 0.1);
@@ -282,7 +281,14 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: all 0.3s ease;
         text-decoration: none;
+      }
+
+      .btn-scroll-top:hover {
+        background: white;
+        color: var(--primary-color);
+        transform: translateY(-3px);
       }
       /* --- TOAST NOTIFICATION --- */
       .tsot-toast {
@@ -317,12 +323,26 @@
         font-weight: 600;
         letter-spacing: 0.02em;
       }
+      /* Thiết lập trạng thái mặc định cho danh sách sản phẩm liên quan */
+      #related-products {
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Lớp phụ để kích hoạt khi chuyển trang (mờ đi và hạ thấp xuống một chút) */
+      #related-products.fade-out {
+        opacity: 0;
+        transform: translateY(10px);
+      }
     </style>
   </head>
   <body>
     <nav class="navbar navbar-expand-md sticky-top navbar-custom">
       <div class="container-xl">
-        <a class="brand-name" href="home_temp.html">TSOT</a>
+        <a class="brand-name" href="index.html">TSOT</a>
 
         <div class="d-flex align-items-center gap-3 order-md-3">
           <div class="search-container d-flex align-items-center">
@@ -374,21 +394,17 @@
         >
           <ul class="navbar-nav gap-md-2">
             <li class="nav-item text-center">
-              <a
-                class="nav-link nav-link-custom"
-                href="home_temp.html#page-intro"
+              <a class="nav-link nav-link-custom" href="index.html#page-intro"
                 >GIỚI THIỆU</a
               >
             </li>
             <li class="nav-item text-center">
-              <a class="nav-link nav-link-custom" href="home_temp.html#son-li"
+              <a class="nav-link nav-link-custom" href="index.html#son-li"
                 >BỘ SƯU TẬP</a
               >
             </li>
             <li class="nav-item text-center">
-              <a
-                class="nav-link nav-link-custom"
-                href="home_temp.html#company-info"
+              <a class="nav-link nav-link-custom" href="index.html#company-info"
                 >VỀ CHÚNG TÔI</a
               >
             </li>
@@ -409,7 +425,7 @@
             <nav aria-label="breadcrumb" class="mb-4">
               <ol class="breadcrumb small">
                 <li class="breadcrumb-item">
-                  <a href="home_temp.html#son-li">Sản phẩm</a>
+                  <a href="index.html#son-li">Sản phẩm</a>
                 </li>
                 <li class="breadcrumb-item" id="breadcrumb-collection"></li>
                 <li class="breadcrumb-item active" id="breadcrumb-name">
@@ -464,10 +480,35 @@
       </div>
     </main>
 
-    <section class="py-5" style="background-color: rgba(127, 52, 66, 0.02)">
+    <section class="py-5" style="background-color: rgba(127, 52, 66, 0.08)">
       <div class="container-xl py-4">
-        <h3 class="hero-title h2 text-center">Khám phá thêm</h3>
-        <div class="row g-4 justify-content-center" id="related-products"></div>
+        <h3 class="hero-title h2 text-center mb-4">Khám phá thêm</h3>
+
+        <div
+          class="d-flex align-items-center justify-content-center gap-2 gap-md-3"
+        >
+          <button
+            class="btn p-1 border-0"
+            id="prev-related-btn"
+            style="color: var(--primary-color)"
+          >
+            <span class="material-symbols-outlined fs-2">chevron_left</span>
+          </button>
+
+          <div
+            class="d-flex justify-content-center align-items-stretch w-100 mx-auto"
+            id="related-products"
+            style="max-width: 900px; gap: 1.5rem"
+          ></div>
+
+          <button
+            class="btn p-1 border-0"
+            id="next-related-btn"
+            style="color: var(--primary-color)"
+          >
+            <span class="material-symbols-outlined fs-2">chevron_right</span>
+          </button>
+        </div>
       </div>
     </section>
 
@@ -499,39 +540,70 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      // 1. DATABASE SẢN PHẨM
       const products = {
-        "hong-duom": {
-          name: "Hồng Đượm",
+        "do-nhung": {
+          name: "Đỏ Nhung",
           collection: "The Matte Series",
           sub: "Màu #M01 — Matte Velvet Lipstick",
           price: 299000,
-          img: "https://lh3.googleusercontent.com/aida-public/AB6AXuA5kXyefTzkY02ETfjg218yvhP9087i4neIhfLWPSHv8hp9VWHx61ZhfWLIJZerhPabuW8vlDx4WTkTn0Ee1esZAsi52l40y_yqGvsSfJZ_1Ex3Skzh3KQUqipci9PVSUCnBkf7AX3Qqh85O_jJ_EwI95WsMjbULFz-KG_rZYTlFw_iq7wZr7xlbLuQxyW67briaTa3hIhGeUkDXba1wrmwkL8WxQ58uD873usyqJvIvOrcM1YaEhHvIOtD9oZHjZ1wEowTssAQV6c",
-          desc: "Sắc hồng đất ấm áp tôn vinh vẻ đẹp tự nhiên.",
+          img: "https://lh3.googleusercontent.com/pw/AP1GczPmswCIxwRaT0LEwOZn_h8E4reepJrtNTvhOVm6uiVJ2u-tR_PK0vc_av0xdHsEFnSJ6wF0VI3zfXJlKpEMdbsDRaMxI5MVehQ-e4jova5vXUpaYiqMtewnCwGlPDgv3hc5ACz_HYapD2X68hBlINyN=w1024-h1024-s-no-gm?authuser=0",
+          desc: "Sắc đỏ thuần chuẩn tông, mang lại cảm giác quyền lực, sang trọng và đầy quyến rũ như những đóa hồng nhung.",
         },
-        "do-kieu-sa": {
-          name: "Đỏ Kiêu Sa",
+        "hong-canh-kho": {
+          name: "Hồng Cánh Khô",
           collection: "The Matte Series",
           sub: "Màu #M02 — Matte Velvet Lipstick",
           price: 299000,
-          img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDZylEXE9y1BYXdEwqxZgNjy_Hlgmt58niDFCtL92canj8uVexTsm3bE_C2ENkTZDQLkv4RLR_E4s1kjlk3DoeUHm9byn4PwohH5xauj2FZKF4J09pn9np2AKXbp570Iha9MnhEv6SY_udOUnn60uNuoyYSl0xJ8dZxXj-1Ik6VhssLG1pf_0-MRgIPgB1JRzkyBRqFY7kf8Sk3IFrtBlDysDschl32R5Pxi9GKXDRldrYVbJPVFZ2wBX0Iee9kF7mKrsekd-TTtX0",
-          desc: "Màu đỏ thuần quyền lực dành cho những quý cô hiện đại.",
+          img: "https://lh3.googleusercontent.com/pw/AP1GczOHxpRNCeJ57myfW02_Ke6hXjY6KeG28CIYL7ghDvcXE2eTZ6IWwLIqWNe8t-OLYcSoj1kFmRzJutSoV_0mWLwBabfRIxPeRhHoLvF6qwUiihvtqFoohZhvPd2Fkopay6rHOHN8cnQ-Cj3Ut4ut5TvL=w1024-h1024-s-no-gm?authuser=0",
+          desc: "Sự kết hợp hoàn hảo giữa sắc hồng nữ tính và một chút chút tông đất trầm ấm, tạo nên màu son dịu dàng, thanh lịch",
+        },
+        "cam-dao": {
+          name: "Cam Đào",
+          collection: "The Matte Series",
+          sub: "Màu #M03 — Matte Velvet Lipstick",
+          price: 299000,
+          img: "https://lh3.googleusercontent.com/pw/AP1GczOvdCxg9sG6oZmp4IIXkjSgw6zYMM5zzhS6_YMu1-JKUp4MN9MRe4MZC7x3f0nSv4RzpHz5uSisf2su4ILTOBslvZesw4Ez-0JJ5pHVT07Pss9cY7kpYdeLCn9tRAkVwFUUd7geoHO4gYMlNbsjCu_f=w1024-h1024-s-no-gm?authuser=0",
+          desc: "Tông cam ấm áp có pha chút ánh đào và sữa, mang lại cảm giác năng động, tươi mới và tràn đầy năng lượng như một trái đào chín mọng.",
+        },
+        "nude-tram": {
+          name: "Nude Trầm",
+          collection: "The Matte Series",
+          sub: "Màu #M04 — Matte Velvet Lipstick",
+          price: 299000,
+          img: "https://lh3.googleusercontent.com/pw/AP1GczPeyzVkrNTE7y815TAFWNuWaYcrMyYrHUDbs0RLVfGxqfSEO2Y7NHDZYfHC2PmQvNPCh-B5uKsIERuFVP6MfNusMCGfvp9s4dhdu_dwPLL52DUrOVOCSnz9NxlZhLn625H2ekcxjioQTcJ3zsGjoK1a=w1122-h1122-s-no-gm?authuser=0",
+          desc: 'Sắc son nude ngả sữa và có chút ánh hồng nhẹ, mang lại cảm giác rất "Tây" và thời thượng',
         },
         "lua-dao": {
           name: "Lụa Đào",
           collection: "The Gloss Series",
           sub: "Màu #G01 — High Shine Gloss",
           price: 249000,
-          img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAetT5PfvhqS5bONW_yVf3EMhttpotXZnsZpPMkro_ZCQrPMNTv5u112wNL2r4yLILes5YWzn6H6isCmk0_l9brfZJCWg1janUUU27_4Dh0Yz0gEOq2Syg8Ct6I1D2XTsF2ausVpEjYRoYYw8ve_72qZeAhJk5yyHkEN2qwz4k-Gw4pFTefSTpKS4vmx6rw8qny1-wyeh-eLJx5Kip3JvJuCqCGjWRRBbsnUKh-5rNmOewcouJZpVkE_-zLW2bNS2c1VCGs0ZNC8FQ",
-          desc: "Hiệu ứng căng mọng như pha lê với sắc đào cam nhẹ nhàng.",
+          img: "https://lh3.googleusercontent.com/pw/AP1GczM4OsWa5Z_0cykAafb0WDqtZ-Gvd-tqwPuOiucx9AHg_n0qV9FdY1WaRtkLq6vA-u_05a600tisqGeGLkdytIphO7Fq57AlWcu4gTnWZjwZL3egKrCSgYc2c_mdV9jwCwVMrbgP_IP2dTqNL8OcNHET=w1254-h1254-s-no-gm",
+          desc: "Sắc hồng đào căng mướt như lụa, rạng rỡ và ngọt ngào tựa đóa hoa xuân vừa nở.",
         },
-        "dau-ban-mai": {
-          name: "Dâu Ban Mai",
+        "man-ban-mai": {
+          name: "Mận Ban Mai",
           collection: "The Gloss Series",
           sub: "Màu #G02 — High Shine Gloss",
           price: 249000,
-          img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCijrHKfgY56PJYUbifqywzOgD6S59subLoojyAkvOha9EPK-ew1tGR5F_HZolEmUawQwnG_8vdGfzfXmjwZHFPDvSswUgg86bCerHins3qi_ChIz9Fz1sN5sYY65m8lCRyrTzG3aD4sA4tIHzuNfaAxgWh3F38NRU_FEEvV477AxgdGKYElVe17ihoHw0KRIdIGcSHqKF_DpSmlpSrsOW_cPvbZE8hVsC2IQlfhjzilN-jWAqvWrfdXc2tpjWeQ5oj8KK8bpbfHqg",
-          desc: "Sắc hồng dâu ngọt ngào như sương sớm.",
+          img: "https://lh3.googleusercontent.com/pw/AP1GczMJHe90zyuawabMlXQ4Wa7nc4Wogvh7VlvtPhEOC0VGglzrgZsIh6abgTh_tfPcmSJBTdMSQmKRo3fmV88Vr79bxA_nFed61uH01AqX1juTDllpxmsW7tXAKV4dgofhAX5ibHp9xe4u_M_iy0MP2ySl=w1254-h1254-s-no-gm",
+          desc: "Sắc đỏ mận mọng nước hòa cùng ánh hồng trong trẻo, tựa quả chín đọng sương sớm.",
+        },
+        "do-man-chin": {
+          name: "Đỏ Mận Chín",
+          collection: "The Gloss Series",
+          sub: "Màu #G03 — High Shine Gloss",
+          price: 249000,
+          img: "https://lh3.googleusercontent.com/pw/AP1GczPvmBU6Krek4s716XCcFbz284baTMpiX_577BedZkHRTxmmW80uLtFmDgtBygyqur29DK8_KaxnlRqBT5cSq1pu08emxQ8IfIA__yOTjXokwkzvgn8je_SBU9ClGXU42DcT1AbR67Wz4tXWr_nEqlja=w1254-h1254-s-no-gm",
+          desc: "Sắc đỏ đậm đà, quyền lực pha với ánh trầm của quả cherry chín mọng, tạo cảm giác quyến rũ",
+        },
+        "nang-thuy-tinh": {
+          name: "Nắng Thủy Tinh",
+          collection: "The Gloss Series",
+          sub: "Màu #G04 — High Shine Gloss",
+          price: 249000,
+          img: "https://lh3.googleusercontent.com/pw/AP1GczMtz2-OHmgkyvc6Zi3sK6ZlwJCF-hYg3NIhl3zpR95JAW4Du50PS9yhQ2vg9G7GV7Xyb78QqYa3BO58rL6XqRLE2U3w4QDvS0UDOVxvnRrYEf5ncNCOLiGh7Pqz67UvMpTVY0NTFmIT8BDZcDJApbDs=w1254-h1254-s-no-gm",
+          desc: "Sắc cam đào trong trẻo, rạng rỡ như những vạt nắng sớm xuyên qua ô cửa kính thủy tinh.",
         },
       };
 
@@ -554,7 +626,7 @@
         const colEl = document.getElementById("breadcrumb-collection");
         const collectionPath =
           data.collection === "The Gloss Series" ? "son-bong" : "son-li";
-        colEl.innerHTML = `<a href="home_temp.html#${collectionPath}">${data.collection}</a>`;
+        colEl.innerHTML = `<a href="index.html#${collectionPath}">${data.collection}</a>`;
 
         // 3. LOGIC SỐ LƯỢNG VÀ TÍNH TIỀN TRỰC TIẾP
         const qtyInput = document.getElementById("qty-input");
@@ -584,62 +656,119 @@
         // Chạy lần đầu để hiển thị giá mặc định trong nút
         updateTotal();
 
-        // 4. LOGIC HIỂN THỊ "KHÁM PHÁ THÊM"
+        // 4. LOGIC HIỂN THỊ "KHÁM PHÁ THÊM" (PHÂN TRANG ĐỘNG)
         const relatedBox = document.getElementById("related-products");
-        let htmlContent = "";
+        const prevBtn = document.getElementById("prev-related-btn");
+        const nextBtn = document.getElementById("next-related-btn");
 
-        Object.keys(products).forEach((key) => {
-          if (key !== productId) {
+        // Lọc danh sách các sản phẩm khác sản phẩm hiện tại
+        const relatedKeys = Object.keys(products).filter(
+          (key) => key !== productId,
+        );
+
+        let currentPage = 0;
+
+        // Hàm tính toán số lượng sản phẩm trên 1 trang dựa theo kích thước màn hình
+        function getItemsPerPage() {
+          const width = window.innerWidth;
+          if (width < 576) return 2; // Mobile: tối đa 2 sản phẩm
+          return 3; // Tablet & PC: tối đa 3 sản phẩm
+        }
+
+        // Hàm xử lý render dữ liệu lên giao diện
+        function renderRelatedProducts() {
+          const itemsPerPage = getItemsPerPage();
+          const startIndex = currentPage * itemsPerPage;
+          const endIndex = startIndex + itemsPerPage;
+
+          // Lấy mảng key sản phẩm thuộc trang hiện tại
+          const pageItems = relatedKeys.slice(startIndex, endIndex);
+
+          let htmlContent = "";
+          pageItems.forEach((key) => {
             const item = products[key];
             htmlContent += `
-          <div class="col-6 col-md-3 text-center">
-            <a href="?id=${key}" class="text-decoration-none text-dark">
-              <div class="product-circle-bg mb-3" style="transform: scale(0.8)">
-                <img src="${item.img}" class="img-fluid" alt="${item.name}">
-              </div>
-              <h4 class="h6 mb-1 fw-bold">${item.name}</h4>
-              <p class="small" style="color: var(--primary-color)">${item.price.toLocaleString("vi-VN")}đ</p>
-            </a>
-          </div>
-        `;
+                <div class="text-center" style="flex: 1; min-width: 0; max-width: calc((100% - 3rem) / ${itemsPerPage});">
+                  <a href="?id=${key}" class="text-decoration-none text-dark d-block h-100">
+                    <div class="product-circle-bg mb-3" style="transform: scale(0.85); background-color: #f5f5f4;">
+                      <img src="${item.img}" class="img-fluid" alt="${item.name}">
+                    </div>
+                    <h4 class="h6 mb-1 fw-bold text-truncate">${item.name}</h4>
+                    <p class="small text-muted mb-0">${item.price.toLocaleString("vi-VN")}đ</p>
+                  </a>
+                </div>
+              `;
+          });
+
+          relatedBox.innerHTML = htmlContent;
+
+          // Cập nhật trạng thái ẩn/hiện hoặc làm mờ của nút điều hướng nếu hết trang
+          prevBtn.style.opacity = currentPage === 0 ? "0.3" : "1";
+          prevBtn.disabled = currentPage === 0;
+
+          const maxPage = Math.ceil(relatedKeys.length / itemsPerPage) - 1;
+          nextBtn.style.opacity = currentPage >= maxPage ? "0.3" : "1";
+          nextBtn.disabled = currentPage >= maxPage;
+        }
+
+        // Sự kiện click nút lùi (<)
+        prevBtn.onclick = () => {
+          if (currentPage > 0) {
+            currentPage--;
+            renderRelatedProducts();
           }
+        };
+
+        // Sự kiện click nút tiến (>)
+        nextBtn.onclick = () => {
+          const itemsPerPage = getItemsPerPage();
+          const maxPage = Math.ceil(relatedKeys.length / itemsPerPage) - 1;
+          if (currentPage < maxPage) {
+            currentPage++;
+            renderRelatedProducts();
+          }
+        };
+
+        // Lắng nghe sự kiện thay đổi kích thước màn hình để tự căn chỉnh lại số sản phẩm
+        window.addEventListener("resize", () => {
+          currentPage = 0;
+          renderRelatedProducts();
         });
-        relatedBox.innerHTML = htmlContent;
+
+        // Khởi chạy render lần đầu tiên
+        renderRelatedProducts();
+
+        // --- ĐÂY LÀ DẤU NGOẶC QUAN TRỌNG ĐỂ ĐÓNG KHỐI LỆNH IF (DATA) ---
       }
 
-      // 5. LOGIC SEARCH
-      // 5. LOGIC SEARCH
+      // 5. LOGIC SEARCH (Độc lập nằm ngoài khối "if data" để trang không lỗi nếu lỡ nhập sai ID)
       const searchToggle = document.getElementById("searchToggle");
       const searchWrapper = document.getElementById("searchWrapper");
       const searchInput = document.getElementById("searchInput");
 
-      if (searchToggle) {
-        // Click vào icon để mở/đóng
+      if (searchToggle && searchWrapper && searchInput) {
         searchToggle.addEventListener("click", (e) => {
-          e.stopPropagation(); // Ngăn sự kiện nổi bọt lên document
+          e.stopPropagation();
           searchWrapper.classList.toggle("active");
           if (searchWrapper.classList.contains("active")) {
             searchInput.focus();
           }
         });
+
+        document.addEventListener("click", (e) => {
+          if (
+            !searchWrapper.contains(e.target) &&
+            searchWrapper.classList.contains("active")
+          ) {
+            searchWrapper.classList.remove("active");
+            searchInput.value = "";
+          }
+        });
+
+        searchWrapper.addEventListener("click", (e) => {
+          e.stopPropagation();
+        });
       }
-
-      // Thêm đoạn này: Click ra ngoài để thu gọn
-      document.addEventListener("click", (e) => {
-        // Nếu click không nằm trong searchWrapper và searchWrapper đang mở (active)
-        if (
-          !searchWrapper.contains(e.target) &&
-          searchWrapper.classList.contains("active")
-        ) {
-          searchWrapper.classList.remove("active");
-          searchInput.value = ""; // Tùy chọn: xóa nội dung đã nhập khi đóng
-        }
-      });
-
-      // Ngăn việc click vào ô input làm đóng thanh search
-      searchWrapper.addEventListener("click", (e) => {
-        e.stopPropagation();
-      });
 
       function updateCartBadge() {
         const cart = JSON.parse(localStorage.getItem("tsot_cart")) || [];
@@ -655,46 +784,48 @@
         }
       }
 
-      // Chạy khi trang vừa load
+      // Chạy khi trang vừa load hoàn tất DOM
       document.addEventListener("DOMContentLoaded", () => {
-        checkLoginStatus(); // Kích hoạt kiểm tra đăng nhập
-        updateCartBadge(); // Cập nhật số lượng giỏ hàng
-        // Các logic load sản phẩm khác giữ nguyên...
-      });
-      document.getElementById("add-to-cart-btn").onclick = () => {
-        let cart = JSON.parse(localStorage.getItem("tsot_cart")) || [];
-        const qty = parseInt(document.getElementById("qty-input").value);
-
-        const existingIndex = cart.findIndex((item) => item.id === productId);
-
-        if (existingIndex > -1) {
-          cart[existingIndex].quantity += qty;
-        } else {
-          cart.push({
-            id: productId,
-            name: data.name,
-            price: data.price,
-            img: data.img,
-            quantity: qty,
-            sub: data.sub,
-          });
-        }
-
-        localStorage.setItem("tsot_cart", JSON.stringify(cart));
+        checkLoginStatus();
         updateCartBadge();
+      });
 
-        // THAY THẾ ALERT BẰNG LOGIC TOAST
-        const toast = document.getElementById("toast-container");
-        const toastText = document.getElementById("toast-text");
+      // Gán sự kiện Thêm vào giỏ hàng
+      if (data) {
+        document.getElementById("add-to-cart-btn").onclick = () => {
+          let cart = JSON.parse(localStorage.getItem("tsot_cart")) || [];
+          const qty = parseInt(document.getElementById("qty-input").value);
+          const existingIndex = cart.findIndex((item) => item.id === productId);
 
-        toastText.innerText = `Đã thêm ${qty} ${data.name} vào giỏ hàng!`;
-        toast.classList.add("show");
+          if (existingIndex > -1) {
+            cart[existingIndex].quantity += qty;
+          } else {
+            cart.push({
+              id: productId,
+              name: data.name,
+              price: data.price,
+              img: data.img,
+              quantity: qty,
+              sub: data.sub,
+            });
+          }
 
-        // Tự động ẩn sau 3 giây
-        setTimeout(() => {
-          toast.classList.remove("show");
-        }, 3000);
-      };
+          localStorage.setItem("tsot_cart", JSON.stringify(cart));
+          updateCartBadge();
+
+          // Hiển thị TOAST thông báo thành công
+          const toast = document.getElementById("toast-container");
+          const toastText = document.getElementById("toast-text");
+
+          toastText.innerText = `Đã thêm ${qty} ${data.name} vào giỏ hàng!`;
+          toast.classList.add("show");
+
+          setTimeout(() => {
+            toast.classList.remove("show");
+          }, 3000);
+        };
+      }
+
       function checkLoginStatus() {
         const user = JSON.parse(localStorage.getItem("tsot_user"));
         const userLink = document.getElementById("user-link");
@@ -702,12 +833,9 @@
         const userNameDisplay = document.getElementById("user-name-display");
 
         if (user && user.fullName) {
-          // 1. Chuyển hướng link sang trang profile
           userLink.href = "profile.html";
-          // 2. Làm icon "đặc" lại (FILL: 1)
           userIcon.style.fontVariationSettings =
             "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24";
-          // 3. Hiện tên User in hoa
           userNameDisplay.innerText = user.fullName.toUpperCase();
           userNameDisplay.style.display = "inline";
         }
